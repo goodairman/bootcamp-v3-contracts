@@ -10,6 +10,24 @@ async function deployTokenFixture() {
     return { token, deployer, receiver, exchange }
 }
 
+async function transferFromTokenFixture() {
+    const {
+        token,
+        deployer,
+        receiver,
+        exchange } = await deployTokenFixture()
+
+    const AMOUNT = ethers.parseUnits("100", 18)
+
+    await (await token.connect(deployer).approve(exchange.address, AMOUNT)).wait()
+
+    const transaction = await token.connect(exchange).transferFrom(deployer.address, receiver.address, AMOUNT)
+    await transaction.wait()
+
+    return { token, deployer, receiver: receiver, exchange, transaction }
+}
+
 module.exports = {
-    deployTokenFixture
+    deployTokenFixture,
+    transferFromTokenFixture
 }
