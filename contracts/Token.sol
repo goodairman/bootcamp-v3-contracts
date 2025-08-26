@@ -29,21 +29,9 @@ contract Token {
         balanceOf[msg.sender] = totalSupply;
     }
 
-    function approve(
-        address _spender,
-        uint256 _value
-    ) public returns (bool success) {
-        require(_spender != address(0), "Token: Recipient is address 0");
-
-        allowance[msg.sender][_spender] = _value;
-
-        emit Approval(msg.sender, _spender, _value);
-        return true;
-    }
-
     function transfer(address _to, uint256 _value) public returns (bool success) {
-        require(balanceOf[msg.sender] >= _value, "Token: Insufficient Funds");
-
+        require(balanceOf[msg.sender] >= _value, "Token: Insufficent Funds");
+        
         _transfer(msg.sender, _to, _value);
 
         return true;
@@ -58,9 +46,28 @@ contract Token {
         emit Transfer(_from, _to, _value);
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-        require(_value <= balanceOf[_from], "Token: Insufficient Funds");
-        require(_value <= allowance[_from][msg.sender], "Token: Insufficient allowance");
+    function approve(
+        address _spender,
+        uint256 _value
+    ) public returns (bool success) {
+        require(_spender != address(0), "Token: Recipient is address 0");
+
+        allowance[msg.sender][_spender] = _value;
+
+        emit Approval(msg.sender, _spender, _value);
+        return true;
+    }
+
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns(bool success) {
+        require(_value <= balanceOf[_from], "Token: Insufficent Funds");
+        require(
+            _value <= allowance[_from][msg.sender],
+            "Token: Insufficient allowance"
+        );
 
         allowance[_from][msg.sender] -= _value;
 
